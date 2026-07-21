@@ -1,0 +1,16 @@
+/data
+/ckpt
+/PromptSwitch
+/figs
+/tvr/models/ViT-B-*.pt
+/tvr/models/modeling.py
+
+.DS_Store
+**/.DS_Store
+__pycache__/
+*.py[cod]
+
+a.py
+draw.ipynb
+query_vis.py
+query_vis.sh

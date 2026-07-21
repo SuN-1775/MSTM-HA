@@ -1,0 +1,32 @@
+# MSTMHA / MSTMHA-MSTE 核心依赖
+# 对应 conda 环境名: mstmha
+# Python: 3.8  |  实测: torch 2.1.0+cu121
+#
+# 安装顺序建议:
+#   1) conda create -n mstmha python=3.8 -y && conda activate mstmha
+#   2) 先装 PyTorch（见下方注释）
+#   3) pip install -r requirements.txt
+#   4) Mamba 相关依赖见 MAMBA_ENV_SETUP.md
+
+# --- PyTorch（请先单独安装，不要取消注释后直接进本文件）---
+# pip install torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 \
+#   --index-url https://download.pytorch.org/whl/cu121
+
+# --- 数据与视频 ---
+numpy==1.24.1
+pandas==2.0.3
+decord==0.6.0
+opencv-python
+Pillow==10.2.0
+
+# --- 文本 / CLIP tokenization ---
+ftfy
+regex
+tqdm
+
+# --- 模型与工具 ---
+timm
+einops
+transformers==4.30.0
+thop
+functional

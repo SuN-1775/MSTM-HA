@@ -1,0 +1,36 @@
+CUDA_VISIBLE_DEVICES=0 \
+python -m torch.distributed.launch \
+--master_port 2503 \
+--nproc_per_node=1 \
+--use_env \
+main_retrieval.py \
+--do_eval 1 \
+--workers 8 \
+--n_display 50 \
+--epochs 5 \
+--lr 1e-3 \
+--coef_lr 1e-4 \
+--batch_size 64 \
+--batch_size_val 64 \
+--anno_path /root/vtr/MSTMHA/datasets/MSR-VTT/anns \
+--video_path /root/vtr/MSTMHA/datasets/MSR-VTT/MSRVTT_Videos \
+--datatype msrvtt \
+--max_words 32 \
+--max_frames 12 \
+--video_framerate 1 \
+--output_dir /root/vtr/MSTMHA/outputs/ckpt/msrvtt \
+--center 1 \
+--query_number 8 \
+--cross_att_layer 3 \
+--query_share 1 \
+--cross_att_share 1 \
+--add_query_score_for_eval 1 \
+--base_encoder ViT-B/32 \
+--agg_module MSTE \
+--temp 3 \
+--inter_diversity_weight 0.0001 \
+--hca_alpha 0.5 \
+--ssr_beta 0.07 \
+--ssr_delta 0.75 \
+--init_model /root/vtr/MSTMHA/outputs/ckpt/msrvtt/best.pth \
+--loss2_weight 0.5
