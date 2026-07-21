@@ -28,7 +28,6 @@ main_retrieval.py \
 --base_encoder ViT-B/32 \
 --agg_module MSTE \
 --temp 3 \
---inter_diversity_weight 0.0001 \
 --hca_alpha 0.5 \
 --ssr_beta 0.07 \
 --ssr_delta 0.75 \

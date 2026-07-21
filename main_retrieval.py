@@ -77,8 +77,6 @@ def get_args(description='Disentangled Representation Learning for Text-Video Re
 
     parser.add_argument('--center', type=int, default=8)
     
-    parser.add_argument('--inter_diversity_weight', type=float, default=0.0001,
-                        help='Weight for the inter-diversity regularizer.')
     parser.add_argument('--use_hca', type=int, default=1, help='Whether to enable the HCA auxiliary branch.')
     parser.add_argument('--hca_alpha', type=float, default=0.5, help='Loss weight for the HCA auxiliary branch.')
     parser.add_argument('--ssr_beta', type=float, default=0.07, help='SSR regularization weight.')
@@ -240,7 +238,7 @@ def prep_optimizer(args, model, num_train_optimization_steps, local_rank):
     scheduler = None
     
     optimizer = BertAdam(optimizer_grouped_parameters, lr=args.lr, warmup=warmup_proportion,
-                         schedule='warmup_cosine', b1=0.9, b2=0.98, e=1e-6,
+                         schedule='warmup_linear', b1=0.9, b2=0.98, e=1e-6,
                          t_total=num_train_optimization_steps, weight_decay=weight_decay,
                          max_grad_norm=1.0)
 
@@ -306,14 +304,14 @@ def train_epoch(epoch, args, model, train_dataloader, device, n_gpu, optimizer,
         # print(flops, params)
         # exit()
 
-        loss, uniformity_loss, Inter_Diversity, Intra_Consistency = model(text_ids, text_mask, video, video_mask, idx, global_step)
+        loss, main_loss, hca_loss, ssr_loss = model(text_ids, text_mask, video, video_mask, idx, global_step)
         
         if n_gpu > 1:
             # print(loss.shape)
             loss = loss.mean()  # mean() to average on multi-gpu.
-            uniformity_loss = uniformity_loss.mean()
-            Inter_Diversity = Inter_Diversity.mean()
-            Intra_Consistency = Intra_Consistency.mean()
+            main_loss = main_loss.mean()
+            hca_loss = hca_loss.mean()
+            ssr_loss = ssr_loss.mean()
             
             # alignment_loss = alignment_loss.mean()
 
@@ -341,12 +339,13 @@ def train_epoch(epoch, args, model, train_dataloader, device, n_gpu, optimizer,
         end = time.time()
 
         reduced_l = reduce_loss(loss, args)
-        reduced_uniformity_loss = reduce_loss(uniformity_loss, args)
-        reduced_Inter_Diversity_loss = reduce_loss(Inter_Diversity, args)
-        reduced_Intra_Consistency_loss = reduce_loss(Intra_Consistency, args)
+        reduced_main_loss = reduce_loss(main_loss, args)
+        reduced_hca_loss = reduce_loss(hca_loss, args)
+        reduced_ssr_loss = reduce_loss(ssr_loss, args)
+        total_loss += float(reduced_l)
         # reduced_alignment_loss = reduce_loss(alignment_loss, args)
         meters.update(time=batch_time, data=data_time, loss=float(reduced_l),
-                      E_loss=float(reduced_uniformity_loss), D_loss=float(reduced_Inter_Diversity_loss), C_loss=float(reduced_Intra_Consistency_loss))
+                      main_loss=float(reduced_main_loss), hca_loss=float(reduced_hca_loss), ssr_loss=float(reduced_ssr_loss))
 
         eta_seconds = meters.time.global_avg * (max_steps - global_step)
         eta_string = str(datetime.timedelta(seconds=int(eta_seconds)))
@@ -447,9 +446,9 @@ def _run_on_single_gpu(args, model, t_mask_list, v_mask_list, t_feat_list, v_fea
             for idx2, (v_mask, v_feat) in enumerate(zip(batch_v_mask, batch_v_feat)):
                 # starter.record()
                 logits, *_tmp = model.get_similarity_logits(t_feat, cls, v_feat, t_mask, v_mask)
-                # [修复] 评估时也不应该加上辅助分数，保持主检索矩阵的纯净
-                s2, _, _  = model._score(t_feat, cls, v_feat, t_mask, v_mask)
-                logits += args.loss2_weight * s2
+                if args.add_query_score_for_eval:
+                    s2, _, _  = model._score(t_feat, cls, v_feat, t_mask, v_mask)
+                    logits += args.loss2_weight * s2
                 # ender.record()
                 # torch.cuda.synchronize()
                 # curr_time = starter.elapsed_time(ender)

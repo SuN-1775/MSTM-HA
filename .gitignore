@@ -4,7 +4,6 @@
 /PromptSwitch
 /figs
 /tvr/models/ViT-B-*.pt
-/tvr/models/modeling.py
 
 # macOS and Python cache files
 .DS_Store

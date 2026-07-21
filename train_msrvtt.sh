@@ -25,7 +25,6 @@ main_retrieval.py \
 --output_dir /home/mkyvkbwh/sun/MSTMHA-MSTE-3/outputs/ckpt/msrvtt_mste_hca_ssr \
 --center 1 \
 --temp 3 \
---inter_diversity_weight 0.0001 \
 --hca_alpha 0.5 \
 --ssr_beta 0.07 \
 --ssr_delta 0.75 \
