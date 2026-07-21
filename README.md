@@ -12,30 +12,18 @@
   <img src="https://img.shields.io/badge/Backbone-CLIP--ViT--B%2F32-purple">
 </p>
 
-This repository provides the training and evaluation code for MSR-VTT video-text retrieval experiments.
+This is the official code implementation of the paper **“Multi-scale SpatioTemporal Mamba with Hyperbolic Alignment for Video-Text Retrieval”**. More dataset settings and documentation updates will be released soon.
 
-## Updates
+We are continuously organizing the code and documentation. Please stay tuned for the latest updates.
+
+## 🔥 Updates
 
 - [x] Release the MSR-VTT training and evaluation code.
 - [x] Release environment and Mamba installation notes.
-- [ ] Release checkpoints.
 - [ ] Add more dataset-specific scripts if needed.
+- [ ] Improve documentation for additional experimental settings.
 
-## Quick View
-
-```mermaid
-flowchart LR
-    A["MSR-VTT annotations"] --> D["Dataloader"]
-    B["MSR-VTT videos"] --> D
-    C["CLIP ViT-B/32 weights"] --> M["Model"]
-    D --> M
-    M --> T["Training"]
-    M --> E["Evaluation"]
-    T --> O["Checkpoints"]
-    E --> R["Retrieval metrics"]
-```
-
-## Repository Structure
+## 📁 Repository Structure
 
 ```text
 MSTM-HA/
@@ -50,7 +38,7 @@ MSTM-HA/
     └── utils/
 ```
 
-## Environment
+## ⚙️ Environment
 
 ```bash
 conda create -n mstmha python=3.8 -y
@@ -76,7 +64,7 @@ MSTE depends on `mamba-ssm` with Bi-Mamba support. See:
 MAMBA_ENV_SETUP.md
 ```
 
-## CLIP Pretrained Weights
+## 🧩 CLIP Pretrained Weights
 
 Download `ViT-B-32.pt` and place it under:
 
@@ -90,7 +78,7 @@ The CLIP BPE vocabulary file is already included:
 tvr/models/bpe_simple_vocab_16e6.txt.gz
 ```
 
-## Dataset Preparation
+## 📦 Dataset Preparation
 
 Current scripts are prepared for MSR-VTT.
 
@@ -124,7 +112,7 @@ Each video file should be named by its `video_id`:
 {video_id}.mp4
 ```
 
-## Training
+## 🚀 Training
 
 Update paths in `train_msrvtt.sh`:
 
@@ -151,7 +139,7 @@ Default MSR-VTT setting:
 | Train batch size | 128 |
 | Eval batch size | 64 |
 
-## Evaluation
+## 🔎 Evaluation
 
 Update paths in `test_msrvtt.sh`:
 
@@ -168,12 +156,12 @@ Run:
 bash test_msrvtt.sh
 ```
 
-## Notes
+## 📝 Notes
 
-- Checkpoints and datasets are not included in this repository.
+- Datasets are not included in this repository.
 - Large pretrained files such as `ViT-B-32.pt` are ignored by git.
 - Mamba installation can be platform-sensitive; see `MAMBA_ENV_SETUP.md`.
 
-## License
+## 📄 License
 
 This project follows the license provided in `LICENSE`.
